@@ -19,8 +19,8 @@ module.exports = {
     },
   },
   variants: {},
-  plugins: [require('daisyui')],
+  plugins: [require('@tailwindcss/typography'), require('daisyui')],
   daisyui: {
-    themes: ['forest', 'dark', 'light', 'emerald'],
+    themes: ['forest', 'dark', 'light', 'emerald', 'synthwave'],
   },
 };

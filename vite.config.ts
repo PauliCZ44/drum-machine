@@ -8,6 +8,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@audio': path.resolve(__dirname, './src/assets/audio'),
+      '@hooks': path.resolve(__dirname, './src/hooks/'),
     },
   },
   plugins: [react(), tsconfigPaths()],
