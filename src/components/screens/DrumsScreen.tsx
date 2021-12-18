@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Head } from '~/components/shared/Head';
 import Button from '../shared/Button';
+import Audio from '../shared/Audio';
 import useSound from 'use-sound';
+import file from '../../assets';
 
 declare type keysVariationT = 'numPad' | 'letters';
 declare type soundVariationsT = 'v1' | 'v2' | 'v3' | 'v0';
@@ -16,13 +18,6 @@ function DrumScreen() {
   let numKeyBindings: string[] = ['7', '8', '9', '4', '5', '6', '1', '2', '3'];
   let files: [];
 
-  useEffect(() => {
-    keyBindings.forEach((file, i) => {
-      const sound = require(`@audio/v0/${file}.wav`);
-      const [play] = useSound(sound);
-    });
-  }, []);
-
   if (keyBindings.length != numKeyBindings.length || numberOfButtons != numKeyBindings.length) {
     throw new Error('Bad parameters');
   }
@@ -31,7 +26,7 @@ function DrumScreen() {
     buttons.push(
       <Button classnames="drum-pad h-24" size="lg" id={`audio-${i}`} key={i}>
         {keysVariation === 'numPad' ? numKeyBindings[i] : keyBindings[i]}
-        <audio src={`audio-${i}`} className="clip" id={keyBindings[i]}></audio>
+        <Audio src={`../../assets/audio/v0/${keyBindings[i]}.wav`} className="clip" id={keyBindings[i]}></Audio>
       </Button>
     );
   }
