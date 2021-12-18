@@ -1,12 +1,13 @@
 import { FirebaseApp, initializeApp } from 'firebase/app';
 import { getAuth, Auth, connectAuthEmulator } from 'firebase/auth';
-import { connectFirestoreEmulator, getFirestore } from "firebase/firestore";
-import { connectStorageEmulator, getStorage } from "firebase/storage";
+import { connectFirestoreEmulator, getFirestore } from 'firebase/firestore';
+import { connectStorageEmulator, getStorage } from 'firebase/storage';
 
 let firebaseApp: FirebaseApp;
 const useEmulator = () => import.meta.env.VITE_USE_FIREBASE_EMULATOR;
 
 export const setupFirebase = () => {
+  console.log(import.meta.env);
   try {
     firebaseApp = initializeApp({
       apiKey: import.meta.env.VITE_FIREBASE_APIKEY,
@@ -18,7 +19,7 @@ export const setupFirebase = () => {
       appId: import.meta.env.VITE_FIREBASE_APPID,
     });
   } catch (error) {
-    console.error({error})
+    console.error({ error });
   }
 };
 

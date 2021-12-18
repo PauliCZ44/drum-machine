@@ -9,6 +9,8 @@ const Loading = () => (
 
 const IndexScreen = lazy(() => import('~/components/screens/Index'))
 const Page404Screen = lazy(() => import('~/components/screens/404'))
+const DrumsScreen = lazy(() => import('~/components/screens/DrumsScreen'))
+
 
 export const Router = () => {
   return (
@@ -17,6 +19,9 @@ export const Router = () => {
         <Switch>
           <Route exact path="/">
             <IndexScreen />
+          </Route>
+          <Route exact path="/drums">
+            <DrumsScreen />
           </Route>
           <Route path="*">
             <Page404Screen />
