@@ -25,3 +25,7 @@ code {
   margin: auto;
   place-self: center;
 }
+
+.two-cols {
+  grid-column: auto / span 2;
+}
