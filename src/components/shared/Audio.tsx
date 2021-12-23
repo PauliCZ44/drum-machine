@@ -39,7 +39,7 @@ const Audio = forwardRef(
       setTimeout(() => {
         console.log('interval is runnibg');
         isActivated && play();
-      }, delay * (playbackSpeed / 9));
+      }, delay * (playbackSpeed / 8)); //playbackSpeed / number of pads
     }, playInterval);
 
     const [play] = useSound(getAudioUrl(src), { interrupt: true, playbackRate: pitch, volume: volume / 100 });
