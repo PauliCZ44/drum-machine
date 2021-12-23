@@ -3,6 +3,8 @@ import { Head } from '~/components/shared/Head';
 import Button from '../shared/Button';
 import Audio from '../shared/Audio';
 import ThemePicker from '../shared/ThemePicker';
+import Slider from '../shared/Slider';
+import useKeyPress from '../../hooks/useKeyPress';
 
 declare type keysVariationT = 'numPad' | 'letters';
 declare type soundVariationsT = 'v1' | 'v2' | 'v3' | 'v0';
@@ -34,14 +36,23 @@ function DrumScreen() {
   for (let i = 0; i < numberOfButtons; i++) {
     const key = keysVariation === 'numPad' ? numKeyBindings[i] : keyBindings[i];
     const childRef = useRef();
+
+    const isPressed: boolean = useKeyPress(key.toLowerCase());
+    const isPressedAlt: boolean = useKeyPress(key.toLowerCase());
+
+    const pressed = isPressed || isPressedAlt;
+
     buttons.push(
       <Button
-        classnames="btn-primary  drum-pad h-24 p-0 overflow-hidden border-0"
+        classnames={`btn-primary drum-pad h-24 p-0 overflow-hidden border-0 relative ${
+          pressed ? ' btn-active' : ''
+        }  ${pressed}`}
         size="lg"
         id={`audio-${i}`}
         key={i}
         onClick={() => childRef.current.playFromParent()}
       >
+        {key}
         <Audio
           volume={volume}
           pitch={pitch}
@@ -58,7 +69,7 @@ function DrumScreen() {
   }
 
   return (
-    <div id="drum-machine">
+    <div>
       <Head title="Drum machine" />
 
       <div
@@ -70,49 +81,26 @@ function DrumScreen() {
             onClick={() => (keysVariation === 'numPad' ? setKeysVariation('letters') : setKeysVariation('numPad'))}
             classnames="btn-sm btn-outline"
           >
-            Switch to numpad
+            {keysVariation === 'numPad' ? 'Switch to letters' : 'Switch to numpad'}
           </Button>
           <ThemePicker />
         </div>
 
-        <div className="drum-pad__layout">
+        <div className="drum-pad__layout mt-auto" id="drum-machine">
           {buttons}
-
-          <div className="shadow stats">
-            <div className="stat">
-              <div className="stat-title">Play speed: </div>
-              <div className="stat-value">{pitch}</div>
-              <div className="stat-desc">(Or pitch value)</div>
-            </div>
-          </div>
-
-          <input
-            type="range"
-            min="0.5"
-            max="4.01"
+        </div>
+        <div className="drum-pad__layout mb-auto mt-10">
+          <Slider
+            title="Play speed: "
+            desc="(Or pitch value)"
+            min={0.5}
+            max={4}
             value={pitch}
-            step="0.1"
-            className="range range-primary block my-auto p-5 two-cols"
+            step={0.1}
             onChange={(e) => changePitch(e)}
           />
 
-          <div className="shadow stats">
-            <div className="stat">
-              <div className="stat-title">Volume: </div>
-              <div className="stat-value">{volume}%</div>
-              <div className="stat-desc"></div>
-            </div>
-          </div>
-
-          <input
-            type="range"
-            min="0"
-            max="100"
-            value={volume}
-            step="1"
-            className="range range-primary block my-auto p-5 two-cols"
-            onChange={(e) => changeVol(e)}
-          />
+          <Slider title="Volume: " min={0} max={100} value={volume} step={1} onChange={(e) => changeVol(e)} />
         </div>
       </div>
     </div>

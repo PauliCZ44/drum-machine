@@ -9,7 +9,7 @@ interface AudioI {
   className?: string;
   id: string;
   binding: string;
-  label: string;
+  label?: string;
   onClick?(event: React.MouseEvent<HTMLAudioElement>): void;
   altBinding: string;
   ref?: any;
@@ -35,26 +35,24 @@ const Audio = forwardRef(({ src, className, id, label, binding, altBinding, pitc
   const [clicked, setClicked] = useState(false);
 
   if (pressed) {
-    console.log('pressed');
-    console.log(play, '\n aaa \n', play());
     play();
+    console.log(ref);
   }
-
   //pressed && play();
 
-  const classes = pressed || clicked ? 'bg-primary opacity-25' : '';
+  const classes = pressed || clicked ? 'bg-black opacity-25' : '';
 
   return (
-    <div
-      className={'w-full h-full flex justify-center items-center ' + classes}
+    <audio
+      controls
+      className={'w-full h-full absolute flex justify-center items-center invisible ' + className + classes}
       onMouseDown={() => {
         setClicked(true);
       }}
       onMouseUp={() => setClicked(false)}
-    >
-      <audio src={src} className={className} id={id}></audio>
-      {label}
-    </div>
+      src={src}
+      id={id}
+    ></audio>
   );
 });
 

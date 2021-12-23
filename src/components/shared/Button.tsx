@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import React from 'react';
 import useSound from 'use-sound';
 
@@ -12,7 +13,7 @@ interface IButtonProps {
 }
 
 export default function Button({ children, size, classnames, id, onClick }: IButtonProps) {
-  let classes: string = `btn btn-${size} ${classnames}`;
+  let classes: string = `btn btn-${size} ${classnames}}`;
 
   return (
     <button className={classes} id={id} onClick={onClick}>
