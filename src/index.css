@@ -24,6 +24,18 @@ code {
   place-self: center;
 }
 
+.drum-beats__layout {
+  display: grid;
+  grid-template-columns: repeat(var(--columns, 8), minmax(0, 50px));
+  max-width: 900px;
+  min-width: 600px;
+  gap: 0.5rem;
+  width: 100%;
+  place-self: center;
+  justify-content: center;
+  grid-auto-rows: 48px;
+}
+
 .two-cols {
   grid-column: auto / span 2;
 }
@@ -34,4 +46,8 @@ code {
 
 #drum-machine .btn {
   transition-duration: 0.1s;
+}
+
+.beats-screen .stat {
+  padding: 0.125rem 1.5rem;
 }

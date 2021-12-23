@@ -16,7 +16,6 @@ export default function ThemePicker() {
     document.getElementsByTagName('html')[0].setAttribute('data-theme', theme);
   }
 
-  console.log(theme);
   return (
     <div className="dropdown dropdown-end">
       <div tabIndex={0} className="m-1 btn btn-sm btn-outline">
