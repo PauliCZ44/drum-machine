@@ -35,7 +35,7 @@ function DrumScreen() {
 
   for (let i = 0; i < numberOfButtons; i++) {
     const key = keysVariation === 'numPad' ? numKeyBindings[i] : keyBindings[i];
-    const childRef = useRef();
+    const childRef = useRef<any>();
 
     const isPressed: boolean = useKeyPress(key.toLowerCase());
     const isPressedAlt: boolean = useKeyPress(key.toLowerCase());
@@ -50,7 +50,7 @@ function DrumScreen() {
         size="lg"
         id={`audio-${i}`}
         key={i}
-        onClick={() => childRef.current.playFromParent()}
+        onClick={() => childRef?.current?.playFromParent()}
       >
         {key}
         <Audio
@@ -59,7 +59,6 @@ function DrumScreen() {
           ref={childRef}
           src={`../../assets/audio/v0/${keyBindings[i]}.wav`}
           className="clip"
-          label={key}
           id={keyBindings[i]}
           binding={keyBindings[i]}
           altBinding={numKeyBindings[i]}

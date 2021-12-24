@@ -12,4 +12,12 @@ export default defineConfig({
     },
   },
   plugins: [react(), tsconfigPaths()],
+  server: {
+    proxy: {
+      // forward `/uploads/` endpoint to -> `http://localhost:5000/uploads/`
+      '^/uploads': {
+        target: 'http://localhost:5000/',
+      },
+    },
+  },
 });

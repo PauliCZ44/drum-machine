@@ -7,7 +7,6 @@ let firebaseApp: FirebaseApp;
 const useEmulator = () => import.meta.env.VITE_USE_FIREBASE_EMULATOR;
 
 export const setupFirebase = () => {
-  console.log(import.meta.env);
   try {
     firebaseApp = initializeApp({
       apiKey: import.meta.env.VITE_FIREBASE_APIKEY,

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, ReactChildren, ReactComponentElement } from 'react';
 import { Head } from '~/components/shared/Head';
 import Button from '../shared/Button';
 import Audio from '../shared/Audio';
@@ -21,21 +21,21 @@ function BeatsScreen() {
   let buttons: JSX.Element[] = [];
   let sounds: string[] = ['Q', 'W', 'E', 'A', 'S', 'D', 'Z', 'X', 'C'];
 
-  function changePitch(e): void {
-    setPitch(e.target.value);
+  function changePitch(e: React.ChangeEvent<HTMLInputElement>): void {
+    setPitch(+e.target.value);
   }
 
-  function changeVol(e): void {
-    setVolume(e.target.value);
+  function changeVol(e: React.ChangeEvent<HTMLInputElement>): void {
+    setVolume(+e.target.value);
   }
 
-  function changeSpeed(e): void {
-    setSpeed(e.target.value);
+  function changeSpeed(e: React.ChangeEvent<HTMLInputElement>): void {
+    setSpeed(+e.target.value);
   }
 
   for (let i = 0; i < numberOfSounds; i++) {
     for (let j = 0; j < numberOfBeats; j++) {
-      const childRef = useRef();
+      const childRef = useRef<any>();
       buttons.push(
         <Button
           classnames="btn drum-pad h-12 p-0 overflow-hidden border-0 relative rounded-md shadow-lg border-2 border-gray-500/50"
@@ -44,8 +44,10 @@ function BeatsScreen() {
           key={i + '-' + j}
           toggleState={true}
           onClick={() => {
-            childRef.current.setIsActivated();
-            childRef.current.playFromParent();
+            if (childRef?.current) {
+              childRef.current.setIsActivated();
+              childRef.current.playFromParent();
+            }
           }}
         >
           {i}

@@ -5,8 +5,7 @@ import useSound from 'use-sound';
 declare type size = 'lg' | 'md' | 'sm' | 'xs';
 
 interface IButtonProps {
-  toggleState: boolean;
-  primary: boolean;
+  toggleState?: boolean;
   children: React.ReactNode;
   size?: size;
   classnames?: string;
@@ -14,12 +13,12 @@ interface IButtonProps {
   onClick?(event: React.MouseEvent<HTMLButtonElement>): void;
 }
 
-export default function Button({ primary, children, size, classnames, id, toggleState, onClick }: IButtonProps) {
-  const [isActive, setIsActive] = useState(false);
+export default function Button({ children, size, classnames, id, toggleState, onClick }: IButtonProps) {
+  const [isActive, setIsActive] = useState<boolean>(false);
 
   let classes: string = `btn ${isActive ? 'btn-primary' : ''}  btn-${size} ${classnames} `;
 
-  function handleClick(e) {
+  function handleClick(e: React.MouseEvent<HTMLButtonElement>) {
     console.log('handleClick');
     onClick && onClick(e);
     setIsActive(!isActive);

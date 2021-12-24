@@ -8,7 +8,7 @@ interface IAudio {
   title: string;
   desc?: string;
   inputClassNames?: string;
-  onChange(event: React.MouseEvent<HTMLInputElement>): void;
+  onChange(event: React.ChangeEvent<HTMLInputElement>): void;
 }
 
 export default function Slider({
