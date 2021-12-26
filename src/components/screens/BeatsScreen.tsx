@@ -4,6 +4,7 @@ import Button from '../shared/Button';
 import Audio from '../shared/Audio';
 import ThemePicker from '../shared/ThemePicker';
 import Slider from '../shared/Slider';
+import HomeBtn from '../shared/HomeBtn';
 
 declare type soundVariationsT = 'v1' | 'v2' | 'v3' | 'v0';
 
@@ -57,7 +58,7 @@ function BeatsScreen() {
             volume={volume}
             pitch={pitch}
             ref={childRef}
-            src={`../../assets/audio/v0/${sounds[i]}.wav`}
+            src={`/audio/v0/${sounds[i]}.wav`}
             className="clip"
             id={sounds[i]}
             binding={sounds[i]}
@@ -66,7 +67,9 @@ function BeatsScreen() {
       );
     }
   }
+
   let columns = { '--columns': numberOfBeats } as React.CSSProperties;
+
   return (
     <div>
       <Head title="Beats machine" />
@@ -75,7 +78,9 @@ function BeatsScreen() {
         className="min-h-screen container mx-auto flex flex-col flex-center justify-center items-center beats-screen"
         id="display"
       >
-        <div className="header flex content-end items-center w-full pt-2 px-5 justify-end gap-5 ">
+        <div className="header flex content-end items-center w-full justify-between pt-2 px-5 gap-5 ">
+          <HomeBtn />
+
           <ThemePicker />
         </div>
 

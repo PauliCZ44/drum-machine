@@ -1,6 +1,6 @@
 import React from 'react';
 
-interface IAudio {
+interface ISlider {
   min: number;
   max: number;
   value: number;
@@ -20,7 +20,7 @@ export default function Slider({
   desc,
   inputClassNames,
   onChange,
-}: IAudio) {
+}: ISlider) {
   return (
     <>
       <div className="shadow stats">

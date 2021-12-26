@@ -23,27 +23,21 @@ const Audio = forwardRef(
   ({ src, className, id, binding, altBinding = '', pitch, volume, interval = 0, delay = 250 }: AudioI, ref) => {
     const isPressed: boolean = useKeyPress(binding.toLowerCase());
     const isPressedAlt = useKeyPress(altBinding.toLowerCase());
+    const [isActivated, setIsActivated] = useState(false);
 
     const [playbackSpeed, setPlaybackSpeed] = useState(interval / 3); // numberOfPads * 1000
-
-    const [isActivated, setIsActivated] = useState(false);
     const [playInterval, setPlayInterval] = useState(playbackSpeed);
-
-    function getAudioUrl(src: string) {
-      console.log(src, 'new src is:', new URL(src, import.meta.url).href);
-      return new URL(src, import.meta.url).href;
-    }
 
     if (interval != 0) {
       useInterval(() => {
-        // Your custom logic here
         setTimeout(() => {
           console.log('interval is runnibg');
           isActivated && play();
         }, delay * (playbackSpeed / 8)); //playbackSpeed / number of pads
       }, playInterval);
     }
-    const [play] = useSound(getAudioUrl(src), { interrupt: true, playbackRate: pitch, volume: volume / 100 });
+
+    const [play] = useSound(src, { interrupt: true, playbackRate: pitch, volume: volume / 100 });
 
     useImperativeHandle(ref, () => ({
       playFromParent: () => play(),
@@ -66,7 +60,7 @@ const Audio = forwardRef(
             setClicked(true);
           }}
           onMouseUp={() => setClicked(false)}
-          src={getAudioUrl(src)}
+          src={src}
           id={id}
         ></audio>
       </>

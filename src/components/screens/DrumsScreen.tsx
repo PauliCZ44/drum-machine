@@ -6,6 +6,8 @@ import ThemePicker from '../shared/ThemePicker';
 import Slider from '../shared/Slider';
 import useKeyPress from '../../hooks/useKeyPress';
 
+import HomeBtn from '../shared/HomeBtn';
+
 declare type keysVariationT = 'numPad' | 'letters';
 declare type soundVariationsT = 'v1' | 'v2' | 'v3' | 'v0';
 
@@ -57,7 +59,7 @@ function DrumScreen() {
           volume={volume}
           pitch={pitch}
           ref={childRef}
-          src={`../../assets/audio/v0/${keyBindings[i]}.wav`}
+          src={`/audio/v0/${keyBindings[i]}.wav`}
           className="clip"
           id={keyBindings[i]}
           binding={keyBindings[i]}
@@ -75,7 +77,8 @@ function DrumScreen() {
         className="min-h-screen container mx-auto flex flex-col flex-center justify-center items-center"
         id="display"
       >
-        <div className="header flex content-end items-center w-full pt-2 px-5 justify-end gap-5 ">
+        <div className="header flex content-end items-center w-full pt-2 px-5 justify-center gap-5 ">
+          <HomeBtn />
           <Button
             onClick={() => (keysVariation === 'numPad' ? setKeysVariation('letters') : setKeysVariation('numPad'))}
             classnames="btn-sm btn-outline"

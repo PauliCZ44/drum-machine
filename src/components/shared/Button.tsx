@@ -19,7 +19,6 @@ export default function Button({ children, size, classnames, id, toggleState, on
   let classes: string = `btn ${isActive ? 'btn-primary' : ''}  btn-${size} ${classnames} `;
 
   function handleClick(e: React.MouseEvent<HTMLButtonElement>) {
-    console.log('handleClick');
     onClick && onClick(e);
     setIsActive(!isActive);
   }
