@@ -52,7 +52,6 @@ const Audio = forwardRef(
     }));
 
     const pressed = isPressed || isPressedAlt;
-    const [clicked, setClicked] = useState(false);
 
     if (pressed) {
       play(); //pressed && play();
@@ -62,10 +61,6 @@ const Audio = forwardRef(
       <>
         <audio
           className={'w-full h-full absolute flex justify-center items-center invisible ' + className}
-          onMouseDown={() => {
-            setClicked(true);
-          }}
-          onMouseUp={() => setClicked(false)}
           src={src}
           id={id}
         ></audio>
