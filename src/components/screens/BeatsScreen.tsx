@@ -13,7 +13,7 @@ function BeatsScreen() {
 
   const [pitch, setPitch] = useState(1);
   const [volume, setVolume] = useState(100);
-  const [speed, setSpeed] = useState(10);
+  const [speed, setSpeed] = useState(15);
 
   const numberOfSounds: number = 9;
   const numberOfBeats: number = 8;
@@ -53,7 +53,7 @@ function BeatsScreen() {
         >
           {i}
           <Audio
-            interval={numberOfBeats * 100 * speed}
+            interval={numberOfBeats * (500 - speed * 10)} // max speed is 30
             delay={j}
             volume={volume}
             pitch={pitch}
@@ -88,7 +88,7 @@ function BeatsScreen() {
           {buttons}
         </div>
         <div className="drum-pad__layout mb-auto mt-10">
-          <Slider title="Speed: " min={1} max={30} value={speed} step={1} onChange={(e) => changeSpeed(e)} />
+          <Slider title="Speed: " min={1} max={40} value={speed} step={1} onChange={(e) => changeSpeed(e)} />
 
           <Slider title="Pitch: " min={0.5} max={4} value={pitch} step={0.1} onChange={(e) => changePitch(e)} />
 

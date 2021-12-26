@@ -25,16 +25,23 @@ const Audio = forwardRef(
     const isPressedAlt = useKeyPress(altBinding.toLowerCase());
     const [isActivated, setIsActivated] = useState(false);
 
-    const [playbackSpeed, setPlaybackSpeed] = useState(interval / 3); // numberOfPads * 1000
-    const [playInterval, setPlayInterval] = useState(playbackSpeed);
+    useEffect(() => {
+      const timer = setTimeout(() => {
+        console.log('effect fired');
+
+        isActivated && play();
+      }, (delay * interval) / 8);
+      return () => clearTimeout(timer);
+    }, []);
 
     if (interval != 0) {
       useInterval(() => {
         setTimeout(() => {
-          console.log('interval is runnibg');
+          console.log('interval is runnibg', delay);
+
           isActivated && play();
-        }, delay * (playbackSpeed / 8)); //playbackSpeed / number of pads
-      }, playInterval);
+        }, (delay * interval) / 8); //playbackSpeed / number of pads
+      }, interval);
     }
 
     const [play] = useSound(src, { interrupt: true, playbackRate: pitch, volume: volume / 100 });
@@ -48,9 +55,8 @@ const Audio = forwardRef(
     const [clicked, setClicked] = useState(false);
 
     if (pressed) {
-      play();
+      play(); //pressed && play();
     }
-    //pressed && play();
 
     return (
       <>
