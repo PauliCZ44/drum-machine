@@ -19,6 +19,7 @@ export default function DrumSetPicker({ wrapperClasses, onChange }: IDrumSetPick
           <option value="v5">Jungle alt 1</option>
           <option value="v6">Jungle alt 2</option>
           <option value="v7">Jungle alt 3</option>
+          <option value="v7">Synthwawe</option>
         </select>
       </div>
     </div>

@@ -4,12 +4,13 @@ import Button from '../shared/Button';
 import Audio from '../shared/Audio';
 import ThemePicker from '../shared/ThemePicker';
 import Slider from '../shared/Slider';
+import DrumSetPicker from '../shared/DrumSetPicker';
+
 import useKeyPress from '../../hooks/useKeyPress';
 
 import HomeBtn from '../shared/HomeBtn';
 
-declare type keysVariationT = 'numPad' | 'letters';
-declare type soundVariationsT = 'v1' | 'v2' | 'v3' | 'v0';
+import { keysVariationT, soundVariationsT } from '../../types';
 
 function DrumScreen() {
   const [keysVariation, setKeysVariation] = useState<keysVariationT>('letters');
@@ -29,6 +30,10 @@ function DrumScreen() {
 
   function changeVol(e): void {
     setVolume(e.target.value);
+  }
+
+  function handleVariationChange(value: soundVariationsT): void {
+    setSoundVariation(value);
   }
 
   if (keyBindings.length != numKeyBindings.length || numberOfButtons != numKeyBindings.length) {
@@ -59,7 +64,7 @@ function DrumScreen() {
           volume={volume}
           pitch={pitch}
           ref={childRef}
-          src={`/audio/v0/${keyBindings[i]}.wav`}
+          src={`/audio/${soundVariation}/${keyBindings[i]}.wav`}
           className="clip"
           id={keyBindings[i]}
           binding={keyBindings[i]}
@@ -103,6 +108,11 @@ function DrumScreen() {
           />
 
           <Slider title="Volume: " min={0} max={100} value={volume} step={1} onChange={(e) => changeVol(e)} />
+
+          <DrumSetPicker
+            wrapperClasses="three-cols mt-5"
+            onChange={(val: soundVariationsT) => handleVariationChange(val)}
+          ></DrumSetPicker>
         </div>
       </div>
     </div>
