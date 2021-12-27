@@ -32,7 +32,7 @@ const Audio = forwardRef(
         isActivated && play();
       }, (delay * interval) / 8);
       return () => clearTimeout(timer);
-    }, []);
+    }, [interval]);
 
     if (interval != 0) {
       useInterval(() => {

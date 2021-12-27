@@ -9,7 +9,7 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "build-w": "tsc && vite build --watch",
-    "serve": "vite preview"
+    "preview": "vite preview"
   },
   "dependencies": {
     "daisyui": "^1.14.1",
