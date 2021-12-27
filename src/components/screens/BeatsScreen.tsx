@@ -5,8 +5,10 @@ import Audio from '../shared/Audio';
 import ThemePicker from '../shared/ThemePicker';
 import Slider from '../shared/Slider';
 import HomeBtn from '../shared/HomeBtn';
+import Footer from '../shared/Footer';
+import DrumSetPicker from '../shared/DrumSetPicker';
 
-declare type soundVariationsT = 'v1' | 'v2' | 'v3' | 'v0';
+import { soundVariationsT } from '../../types';
 
 function BeatsScreen() {
   const [soundVariation, setSoundVariation] = useState<soundVariationsT>('v0');
@@ -34,6 +36,10 @@ function BeatsScreen() {
     setSpeed(+e.target.value);
   }
 
+  function handleVariationChange(value: soundVariationsT): void {
+    setSoundVariation(value);
+  }
+
   for (let i = 0; i < numberOfSounds; i++) {
     for (let j = 0; j < numberOfBeats; j++) {
       const childRef = useRef<any>();
@@ -58,7 +64,7 @@ function BeatsScreen() {
             volume={volume}
             pitch={pitch}
             ref={childRef}
-            src={`/audio/v0/${sounds[i]}.wav`}
+            src={`/audio/${soundVariation}/${sounds[i]}.wav`}
             className="clip"
             id={sounds[i]}
             binding={sounds[i]}
@@ -71,14 +77,14 @@ function BeatsScreen() {
   let columns = { '--columns': numberOfBeats } as React.CSSProperties;
 
   return (
-    <div>
+    <div className="pb-5">
       <Head title="Beats machine" />
 
       <div
         className="min-h-screen container mx-auto flex flex-col flex-center justify-center items-center beats-screen"
         id="display"
       >
-        <div className="header flex content-end items-center w-full justify-between pt-2 px-5 gap-5 ">
+        <div className="header flex content-end items-center w-full justify-between pt-2 px-5 mb-10 gap-5 ">
           <HomeBtn />
 
           <ThemePicker />
@@ -93,6 +99,11 @@ function BeatsScreen() {
           <Slider title="Pitch: " min={0.5} max={4} value={pitch} step={0.1} onChange={(e) => changePitch(e)} />
 
           <Slider title="Volume: " min={0} max={100} value={volume} step={1} onChange={(e) => changeVol(e)} />
+
+          <DrumSetPicker
+            wrapperClasses="three-cols mt-5"
+            onChange={(val: soundVariationsT) => handleVariationChange(val)}
+          ></DrumSetPicker>
         </div>
       </div>
     </div>

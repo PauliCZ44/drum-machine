@@ -48,8 +48,8 @@ code {
 .drum-beats__layout {
   display: grid;
   grid-template-columns: repeat(var(--columns, 8), minmax(0, 50px));
-  max-width: 900px;
-  min-width: 600px;
+  max-width: 56rem;
+  min-width: 18rem;
   gap: 0.5rem;
   width: 100%;
   place-self: center;
@@ -61,6 +61,10 @@ code {
   grid-column: auto / span 2;
 }
 
+.three-cols {
+  grid-column: auto / span 3;
+}
+
 .btn-active {
   transform: scale(var(--btn-focus-scale, 0.95));
 }
@@ -69,6 +73,7 @@ code {
   transition-duration: 0.1s;
 }
 
-.beats-screen .stat {
+.beats-screen .stat,
+.beats-screen .form-control {
   padding: 0.125rem 1.5rem;
 }

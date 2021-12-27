@@ -2,8 +2,7 @@ import { useState } from 'react';
 import React from 'react';
 import useSound from 'use-sound';
 
-declare type size = 'lg' | 'md' | 'sm' | 'xs';
-
+import { size } from '../../types';
 interface IButtonProps {
   toggleState?: boolean;
   children: React.ReactNode;
