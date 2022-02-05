@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { Head } from '~/components/shared/Head';
 import Button from '../shared/Button';
 import Audio from '../shared/Audio';
@@ -11,6 +11,7 @@ import useCopyToClipboard from '~/hooks/useCopyToClipboard';
 
 import { soundVariationsT } from '../../types';
 import ModalButton from '../shared/ModalButton';
+import Alert from '../shared/Alert';
 
 function BeatsScreen() {
   const textareaRef = useRef<HTMLTextAreaElement>(null!); // - element is always there; non-null assertion operator
@@ -19,6 +20,10 @@ function BeatsScreen() {
   const [pitch, setPitch] = useStickyState(1, 'pitch');
   const [volume, setVolume] = useStickyState(100, 'volume');
   const [speed, setSpeed] = useStickyState(15, 'speed');
+  const [showAlert1, setShowAlert1] = useState(false);
+  const [showAlert2, setShowAlert2] = useState(false);
+  const [showAlert3, setShowAlert3] = useState(false);
+
   const numberOfSounds: number = 9;
   const numberOfBeats: number = 8;
 
@@ -51,7 +56,12 @@ function BeatsScreen() {
     setSoundVariation(value);
   }
 
+  let timeout3;
+  let timeout2;
+  let timeout1;
+
   function copyToClipboard() {
+    showAlert(timeout1, setShowAlert1);
     const filteredObj = {};
     for (const property in stickySettings) {
       if (!!stickySettings[property]) {
@@ -69,11 +79,37 @@ function BeatsScreen() {
     copy(JSON.stringify(settingsObj));
   }
 
+  function showAlert(timeout, setShowAlert) {
+    clearTimeout(timeout);
+    setShowAlert(true);
+    timeout = setTimeout(() => {
+      setShowAlert(false);
+    }, 4000);
+  }
+
   function importSettings(data) {
-    const parsedData = JSON.parse(data);
+    let parsedData;
+    try {
+      parsedData = JSON.parse(data);
+    } catch (e) {
+      showAlert(timeout3, setShowAlert3);
+      throw new Error('Data are corrupted');
+    }
+    if (!parsedData.pitch || !parsedData.speed || !parsedData.soundVariation || !parsedData.els) {
+      showAlert(timeout3, setShowAlert3);
+      throw new Error('Data are corrupted');
+    }
     setPitch(parsedData.pitch);
     setSpeed(parsedData.speed);
     setSoundVariation(parsedData.soundVariation);
+    let newSettings = {};
+    for (const property in parsedData.els) {
+      newSettings[property] = parsedData.els[property];
+    }
+    console.log(newSettings);
+    setStickySettings({ ...stickySettings, ...newSettings });
+
+    showAlert(timeout2, setShowAlert2);
   }
 
   for (let i = 0; i < numberOfSounds; i++) {
@@ -123,7 +159,7 @@ function BeatsScreen() {
       <Head title="Beats machine" />
 
       <div
-        className="min-h-screen container mx-auto flex flex-col flex-center justify-center items-center beats-screen"
+        className="min-h-screen container mx-auto flex flex-col flex-center justify-center items-center beats-screen overflow-x-hidden"
         id="display"
       >
         <div className="header flex content-end items-center w-full justify-between pt-2 px-5 mb-10 gap-5 ">
@@ -161,6 +197,11 @@ function BeatsScreen() {
               ></textarea>
             </ModalButton>
           </div>
+        </div>
+        <div className="absolute flex-col inset-0 flex items-end justify-end -z-10 p-8 gap-4 overflow-hidden">
+          {showAlert3 && <Alert alertClass="alert-error">Error!</Alert>}
+          {showAlert2 && <Alert>Settings imported, please refresh the page to see the effect!</Alert>}
+          {showAlert1 && <Alert>Text copied to clipboard</Alert>}
         </div>
       </div>
     </>
