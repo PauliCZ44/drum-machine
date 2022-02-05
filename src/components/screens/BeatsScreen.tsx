@@ -7,28 +7,30 @@ import Slider from '../shared/Slider';
 import HomeBtn from '../shared/HomeBtn';
 import DrumSetPicker from '../shared/DrumSetPicker';
 import useStickyState from '~/hooks/useStickyState';
+import useCopyToClipboard from '~/hooks/useCopyToClipboard';
 
 import { soundVariationsT } from '../../types';
+import ModalButton from '../shared/ModalButton';
 
 function BeatsScreen() {
-  const [soundVariation, setSoundVariation] = useStickyState('v0', 'soundVariation');
+  const textareaRef = useRef<HTMLTextAreaElement>(null!); // - element is always there; non-null assertion operator
 
+  const [soundVariation, setSoundVariation] = useStickyState('v0', 'soundVariation');
   const [pitch, setPitch] = useStickyState(1, 'pitch');
   const [volume, setVolume] = useStickyState(100, 'volume');
   const [speed, setSpeed] = useStickyState(15, 'speed');
   const numberOfSounds: number = 9;
   const numberOfBeats: number = 8;
 
-  const arr: { [id: string]: boolean } = {};
+  const arr: { [id: string]: number } = {};
 
   for (let i = 0; i < numberOfSounds; i++) {
     for (let j = 0; j < numberOfBeats; j++) {
-      arr[`${i}-${j}`] = false;
+      arr[`${i}-${j}`] = 0;
     }
   }
+  const [value, copy] = useCopyToClipboard();
   const [stickySettings, setStickySettings] = useStickyState(arr, 'stickySettings');
-
-  console.log(arr);
 
   let buttons: JSX.Element[] = [];
   let sounds: string[] = ['Q', 'W', 'E', 'A', 'S', 'D', 'Z', 'X', 'C'];
@@ -49,9 +51,34 @@ function BeatsScreen() {
     setSoundVariation(value);
   }
 
+  function copyToClipboard() {
+    const filteredObj = {};
+    for (const property in stickySettings) {
+      if (!!stickySettings[property]) {
+        filteredObj[property] = stickySettings[property];
+      }
+    }
+
+    const settingsObj = {
+      els: filteredObj,
+      speed,
+      pitch,
+      soundVariation,
+    };
+    console.log(settingsObj);
+    copy(JSON.stringify(settingsObj));
+  }
+
+  function importSettings(data) {
+    const parsedData = JSON.parse(data);
+    setPitch(parsedData.pitch);
+    setSpeed(parsedData.speed);
+    setSoundVariation(parsedData.soundVariation);
+  }
+
   for (let i = 0; i < numberOfSounds; i++) {
     for (let j = 0; j < numberOfBeats; j++) {
-      const isElementActive = stickySettings[`${i}-${j}`];
+      const isElementActive = !!stickySettings[`${i}-${j}`];
       const childRef = useRef<any>();
       buttons.push(
         <Button
@@ -64,7 +91,7 @@ function BeatsScreen() {
           onClick={() => {
             setStickySettings({
               ...stickySettings,
-              [`${i}-${j}`]: true,
+              [`${i}-${j}`]: stickySettings[`${i}-${j}`] ? 0 : 1,
             });
             if (childRef?.current) {
               childRef.current.setIsActivated();
@@ -120,10 +147,19 @@ function BeatsScreen() {
             onChange={(val: soundVariationsT) => handleVariationChange(val)}
           ></DrumSetPicker>
           <div className="form-control -mr-16 mt-3">
-            <Button> Export settings</Button>
+            <Button onClick={copyToClipboard}> Export settings</Button>
           </div>
           <div className="form-control -ml-16 mt-3 col-start-3">
-            <Button> Import settings</Button>
+            <ModalButton buttonLabel="Import settings" onAccept={() => importSettings(textareaRef.current.value)}>
+              <label className="label">
+                <span className="label-text">Paste data here:</span>
+              </label>
+              <textarea
+                className="textarea h-16 w-full textarea-bordered"
+                placeholder='{"els":{...},"speed":...,"'
+                ref={textareaRef}
+              ></textarea>
+            </ModalButton>
           </div>
         </div>
       </div>
