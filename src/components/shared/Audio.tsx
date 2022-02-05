@@ -17,13 +17,28 @@ interface AudioI {
   volume: number;
   interval?: number;
   delay?: number;
+  isActive?: boolean;
 }
 
 const Audio = forwardRef(
-  ({ src, className, id, binding, altBinding = '', pitch, volume, interval = 0, delay = 250 }: AudioI, ref) => {
+  (
+    {
+      src,
+      className,
+      id,
+      binding,
+      altBinding = '',
+      pitch,
+      volume,
+      interval = 0,
+      delay = 250,
+      isActive = false,
+    }: AudioI,
+    ref
+  ) => {
     const isPressed: boolean = useKeyPress(binding.toLowerCase());
     const isPressedAlt = useKeyPress(altBinding.toLowerCase());
-    const [isActivated, setIsActivated] = useState(false);
+    const [isActivated, setIsActivated] = useState(isActive);
 
     useEffect(() => {
       const timer = setTimeout(() => {
@@ -37,8 +52,6 @@ const Audio = forwardRef(
     if (interval != 0) {
       useInterval(() => {
         setTimeout(() => {
-          console.log('interval is runnibg', delay);
-
           isActivated && play();
         }, (delay * interval) / 8); //playbackSpeed / number of pads
       }, interval);
@@ -54,7 +67,7 @@ const Audio = forwardRef(
     const pressed = isPressed || isPressedAlt;
 
     if (pressed) {
-      play(); //pressed && play();
+      play();
     }
 
     return (

@@ -1,25 +1,34 @@
-import React, { useState, useEffect, useRef, ReactChildren, ReactComponentElement } from 'react';
+import React, { useRef } from 'react';
 import { Head } from '~/components/shared/Head';
 import Button from '../shared/Button';
 import Audio from '../shared/Audio';
 import ThemePicker from '../shared/ThemePicker';
 import Slider from '../shared/Slider';
 import HomeBtn from '../shared/HomeBtn';
-import Footer from '../shared/Footer';
 import DrumSetPicker from '../shared/DrumSetPicker';
+import useStickyState from '~/hooks/useStickyState';
 
 import { soundVariationsT } from '../../types';
 
 function BeatsScreen() {
-  const [soundVariation, setSoundVariation] = useState<soundVariationsT>('v0');
+  const [soundVariation, setSoundVariation] = useStickyState('v0', 'soundVariation');
 
-  const [pitch, setPitch] = useState(1);
-  const [volume, setVolume] = useState(100);
-  const [speed, setSpeed] = useState(15);
-
+  const [pitch, setPitch] = useStickyState(1, 'pitch');
+  const [volume, setVolume] = useStickyState(100, 'volume');
+  const [speed, setSpeed] = useStickyState(15, 'speed');
   const numberOfSounds: number = 9;
   const numberOfBeats: number = 8;
-  const numbersOfPads: number = numberOfSounds * numberOfBeats;
+
+  const arr: { [id: string]: boolean } = {};
+
+  for (let i = 0; i < numberOfSounds; i++) {
+    for (let j = 0; j < numberOfBeats; j++) {
+      arr[`${i}-${j}`] = false;
+    }
+  }
+  const [stickySettings, setStickySettings] = useStickyState(arr, 'stickySettings');
+
+  console.log(arr);
 
   let buttons: JSX.Element[] = [];
   let sounds: string[] = ['Q', 'W', 'E', 'A', 'S', 'D', 'Z', 'X', 'C'];
@@ -42,6 +51,7 @@ function BeatsScreen() {
 
   for (let i = 0; i < numberOfSounds; i++) {
     for (let j = 0; j < numberOfBeats; j++) {
+      const isElementActive = stickySettings[`${i}-${j}`];
       const childRef = useRef<any>();
       buttons.push(
         <Button
@@ -50,7 +60,12 @@ function BeatsScreen() {
           id={`audio-${i}`}
           key={i + '-' + j}
           toggleState={true}
+          isActived={isElementActive}
           onClick={() => {
+            setStickySettings({
+              ...stickySettings,
+              [`${i}-${j}`]: true,
+            });
             if (childRef?.current) {
               childRef.current.setIsActivated();
               childRef.current.playFromParent();
@@ -59,6 +74,7 @@ function BeatsScreen() {
         >
           {i}
           <Audio
+            isActive={isElementActive}
             interval={numberOfBeats * (500 - speed * 10)} // max speed is 30
             delay={j}
             volume={volume}
@@ -75,9 +91,8 @@ function BeatsScreen() {
   }
 
   let columns = { '--columns': numberOfBeats } as React.CSSProperties;
-
   return (
-    <div className="pb-5">
+    <>
       <Head title="Beats machine" />
 
       <div
@@ -104,9 +119,15 @@ function BeatsScreen() {
             wrapperClasses="three-cols mt-5"
             onChange={(val: soundVariationsT) => handleVariationChange(val)}
           ></DrumSetPicker>
+          <div className="form-control -mr-16 mt-3">
+            <Button> Export settings</Button>
+          </div>
+          <div className="form-control -ml-16 mt-3 col-start-3">
+            <Button> Import settings</Button>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 
