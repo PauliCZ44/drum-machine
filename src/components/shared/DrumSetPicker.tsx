@@ -1,16 +1,17 @@
 interface IDrumSetPicker {
   wrapperClasses?: string;
   onChange(value: string);
+  value: string;
 }
 
-export default function DrumSetPicker({ wrapperClasses, onChange }: IDrumSetPicker) {
+export default function DrumSetPicker({ wrapperClasses, value, onChange }: IDrumSetPicker) {
   return (
     <div className={wrapperClasses}>
       <div className="form-control w-full max-w-xs">
         <label className="label">
           <span className="label-text">Drum kit set:</span>
         </label>
-        <select className="select select-bordered w-full" onChange={(e) => onChange(e.target.value)}>
+        <select className="select select-bordered w-full" onChange={(e) => onChange(e.target.value)} value={value}>
           <option value="v0">Base</option>
           <option value="v1">Jungle</option>
           <option value="v8">Synthwawe</option>

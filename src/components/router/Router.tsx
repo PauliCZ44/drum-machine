@@ -1,7 +1,8 @@
 import { lazy, Suspense } from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import styles from '../../styles/spinner.module.css';
 
-const Loading = () => <p className="p-4 w-full h-full text-center">Loading...</p>;
+const Loading = () => <div className={styles.trippleSpinner}></div>;
 
 const IndexScreen = lazy(() => import('~/components/screens/Index'));
 const Page404Screen = lazy(() => import('~/components/screens/404'));

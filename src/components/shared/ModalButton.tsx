@@ -1,6 +1,6 @@
 export default function ModalButton({ buttonLabel, children, onAccept }) {
   return (
-    <div>
+    <>
       <label htmlFor={buttonLabel} className="btn modal-button">
         {buttonLabel}
       </label>
@@ -18,6 +18,6 @@ export default function ModalButton({ buttonLabel, children, onAccept }) {
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

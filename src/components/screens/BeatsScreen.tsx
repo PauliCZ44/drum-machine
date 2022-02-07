@@ -1,41 +1,47 @@
 import React, { useRef, useState } from 'react';
 import { Head } from '~/components/shared/Head';
-import Button from '../shared/Button';
-import Audio from '../shared/Audio';
-import ThemePicker from '../shared/ThemePicker';
-import Slider from '../shared/Slider';
-import HomeBtn from '../shared/HomeBtn';
-import DrumSetPicker from '../shared/DrumSetPicker';
-import useStickyState from '~/hooks/useStickyState';
-import useCopyToClipboard from '~/hooks/useCopyToClipboard';
+import Button from '~/components/shared/Button';
+import Audio from '~/components/shared/Audio';
+import ThemePicker from '~/components/shared/ThemePicker';
+import Slider from '~/components/shared/Slider';
+import HomeBtn from '~/components/shared/HomeBtn';
+import DrumSetPicker from '~/components/shared/DrumSetPicker';
+import { useCopyToClipboard, useStickyState, useThrottle } from '~/hooks/';
 
 import { soundVariationsT } from '../../types';
-import ModalButton from '../shared/ModalButton';
-import Alert from '../shared/Alert';
+import ModalButton from '~/components/shared/ModalButton';
+import Alert from '~/components/shared/Alert';
+
+let timeout3;
+let timeout2;
+let timeout1;
 
 function BeatsScreen() {
   const textareaRef = useRef<HTMLTextAreaElement>(null!); // - element is always there; non-null assertion operator
 
   const [soundVariation, setSoundVariation] = useStickyState('v0', 'soundVariation');
-  const [pitch, setPitch] = useStickyState(1, 'pitch');
-  const [volume, setVolume] = useStickyState(100, 'volume');
-  const [speed, setSpeed] = useStickyState(15, 'speed');
+  const [pitch, setPitchS] = useStickyState(1, 'pitch');
+  const [setPitch] = useThrottle(setPitchS, 25);
+  const [volume, setVolumeS] = useStickyState(100, 'volume');
+  const [setVolume] = useThrottle(setVolumeS, 25);
+  const [speed, setSpeedS] = useStickyState(15, 'speed');
+  const [setSpeed] = useThrottle(setSpeedS, 25);
   const [showAlert1, setShowAlert1] = useState(false);
   const [showAlert2, setShowAlert2] = useState(false);
   const [showAlert3, setShowAlert3] = useState(false);
 
   const numberOfSounds: number = 9;
-  const numberOfBeats: number = 8;
+  const numberOfPads: number = 12;
 
-  const arr: { [id: string]: number } = {};
+  const settingsObject: { [id: string]: number } = {};
 
   for (let i = 0; i < numberOfSounds; i++) {
-    for (let j = 0; j < numberOfBeats; j++) {
-      arr[`${i}-${j}`] = 0;
+    for (let j = 0; j < numberOfPads; j++) {
+      settingsObject[`${i}-${j}`] = 0;
     }
   }
   const [value, copy] = useCopyToClipboard();
-  const [stickySettings, setStickySettings] = useStickyState(arr, 'stickySettings');
+  const [stickySettings, setStickySettings] = useStickyState(settingsObject, 'stickySettings');
 
   let buttons: JSX.Element[] = [];
   let sounds: string[] = ['Q', 'W', 'E', 'A', 'S', 'D', 'Z', 'X', 'C'];
@@ -55,10 +61,6 @@ function BeatsScreen() {
   function handleVariationChange(value: soundVariationsT): void {
     setSoundVariation(value);
   }
-
-  let timeout3;
-  let timeout2;
-  let timeout1;
 
   function copyToClipboard() {
     showAlert(timeout1, setShowAlert1);
@@ -80,11 +82,13 @@ function BeatsScreen() {
   }
 
   function showAlert(timeout, setShowAlert) {
+    console.log(timeout);
     clearTimeout(timeout);
     setShowAlert(true);
     timeout = setTimeout(() => {
       setShowAlert(false);
     }, 4000);
+    console.log(timeout);
   }
 
   function importSettings(data) {
@@ -99,6 +103,7 @@ function BeatsScreen() {
       showAlert(timeout3, setShowAlert3);
       throw new Error('Data are corrupted');
     }
+    debugger;
     setPitch(parsedData.pitch);
     setSpeed(parsedData.speed);
     setSoundVariation(parsedData.soundVariation);
@@ -113,7 +118,7 @@ function BeatsScreen() {
   }
 
   for (let i = 0; i < numberOfSounds; i++) {
-    for (let j = 0; j < numberOfBeats; j++) {
+    for (let j = 0; j < numberOfPads; j++) {
       const isElementActive = !!stickySettings[`${i}-${j}`];
       const childRef = useRef<any>();
       buttons.push(
@@ -138,7 +143,7 @@ function BeatsScreen() {
           {i}
           <Audio
             isActive={isElementActive}
-            interval={numberOfBeats * (500 - speed * 10)} // max speed is 30
+            interval={numberOfPads * (500 - speed * 10)} // max speed is 30
             delay={j}
             volume={volume}
             pitch={pitch}
@@ -147,13 +152,14 @@ function BeatsScreen() {
             className="clip"
             id={sounds[i]}
             binding={sounds[i]}
+            numberOfPads={numberOfPads}
           ></Audio>
         </Button>
       );
     }
   }
 
-  let columns = { '--columns': numberOfBeats } as React.CSSProperties;
+  let columns = { '--columns': numberOfPads } as React.CSSProperties;
   return (
     <>
       <Head title="Beats machine" />
@@ -179,6 +185,7 @@ function BeatsScreen() {
           <Slider title="Volume: " min={0} max={100} value={volume} step={1} onChange={(e) => changeVol(e)} />
 
           <DrumSetPicker
+            value={soundVariation}
             wrapperClasses="three-cols mt-5"
             onChange={(val: soundVariationsT) => handleVariationChange(val)}
           ></DrumSetPicker>
@@ -199,8 +206,12 @@ function BeatsScreen() {
           </div>
         </div>
         <div className="absolute flex-col inset-0 flex items-end justify-end -z-10 p-8 gap-4 overflow-hidden">
-          {showAlert3 && <Alert alertClass="alert-error">Error!</Alert>}
-          {showAlert2 && <Alert>Settings imported, please refresh the page to see the effect!</Alert>}
+          {showAlert3 && <Alert alertClass="alert-error">Error with data!</Alert>}
+          {showAlert2 && (
+            <Alert>
+              Settings imported, please refresh the page to see the effect! <br /> (Auto refresh in 3 seconds)
+            </Alert>
+          )}
           {showAlert1 && <Alert>Text copied to clipboard</Alert>}
         </div>
       </div>

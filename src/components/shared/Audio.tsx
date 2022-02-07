@@ -1,10 +1,8 @@
-import { useState, useEffect, forwardRef, useRef, useImperativeHandle } from 'react';
+import { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
 import React from 'react';
 import useSound from 'use-sound';
 
-import useKeyPress from '../../hooks/useKeyPress';
-import useInterval from '../../hooks/useInterval';
-
+import { useKeyPress, useInterval } from '~/hooks/';
 interface AudioI {
   src: string;
   className?: string;
@@ -18,6 +16,7 @@ interface AudioI {
   interval?: number;
   delay?: number;
   isActive?: boolean;
+  numberOfPads: number;
 }
 
 const Audio = forwardRef(
@@ -33,6 +32,7 @@ const Audio = forwardRef(
       interval = 0,
       delay = 250,
       isActive = false,
+      numberOfPads,
     }: AudioI,
     ref
   ) => {
@@ -45,7 +45,7 @@ const Audio = forwardRef(
         console.log('effect fired');
 
         isActivated && play();
-      }, (delay * interval) / 8);
+      }, (delay * interval) / numberOfPads);
       return () => clearTimeout(timer);
     }, [interval]);
 
@@ -53,7 +53,7 @@ const Audio = forwardRef(
       useInterval(() => {
         setTimeout(() => {
           isActivated && play();
-        }, (delay * interval) / 8); //playbackSpeed / number of pads
+        }, (delay * interval) / numberOfPads); //playbackSpeed / number of pads
       }, interval);
     }
 

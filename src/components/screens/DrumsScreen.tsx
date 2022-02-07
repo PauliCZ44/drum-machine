@@ -1,14 +1,13 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useRef } from 'react';
 import { Head } from '~/components/shared/Head';
-import Button from '../shared/Button';
-import Audio from '../shared/Audio';
-import ThemePicker from '../shared/ThemePicker';
-import Slider from '../shared/Slider';
-import DrumSetPicker from '../shared/DrumSetPicker';
+import Button from '~/components/shared/Button';
+import Audio from '~/components/shared/Audio';
+import ThemePicker from '~/components/shared/ThemePicker';
+import Slider from '~/components/shared/Slider';
+import DrumSetPicker from '~/components/shared/DrumSetPicker';
+import HomeBtn from '~/components/shared/HomeBtn';
 
-import useKeyPress from '../../hooks/useKeyPress';
-
-import HomeBtn from '../shared/HomeBtn';
+import { useKeyPress } from '~/hooks/';
 
 import { keysVariationT, soundVariationsT } from '../../types';
 
