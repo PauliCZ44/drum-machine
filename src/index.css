@@ -74,10 +74,35 @@ code {
   max-width: 56rem;
   min-width: 18rem;
   gap: 0.5rem;
-  width: 100%;
   place-self: center;
   justify-content: center;
   grid-auto-rows: 48px;
+}
+
+.drum-beats__slider {
+  position: absolute;
+  width: 100%;
+  height: 1rem;
+  top: -1.5rem;
+  left: -0.5%;
+  background: linear-gradient(to right, transparent, hsla(var(--p) / 0.5), transparent 2%);
+  z-index: 1;
+  pointer-events: none;
+  animation-duration: var(--sliderAnim);
+  animation-name: moveRight;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  animation-fill-mode: both;
+  animation-play-state: var(--sliderAnimState);
+}
+
+@keyframes moveRight {
+  from {
+    transform: translateX(0%);
+  }
+  to {
+    transform: translateX(100%);
+  }
 }
 
 .two-cols {

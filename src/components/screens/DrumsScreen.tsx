@@ -68,6 +68,7 @@ function DrumScreen() {
           id={keyBindings[i]}
           binding={keyBindings[i]}
           altBinding={numKeyBindings[i]}
+          numberOfPads={0}
         ></Audio>
       </Button>
     );

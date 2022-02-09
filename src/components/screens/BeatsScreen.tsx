@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Head } from '~/components/shared/Head';
 import Button from '~/components/shared/Button';
 import Audio from '~/components/shared/Audio';
@@ -12,6 +12,7 @@ import { soundVariationsT } from '../../types';
 import ModalButton from '~/components/shared/ModalButton';
 import Alert from '~/components/shared/Alert';
 
+let timeout4;
 let timeout3;
 let timeout2;
 let timeout1;
@@ -29,11 +30,19 @@ function BeatsScreen() {
   const [showAlert1, setShowAlert1] = useState(false);
   const [showAlert2, setShowAlert2] = useState(false);
   const [showAlert3, setShowAlert3] = useState(false);
-
+  const [showAlert4, setShowAlert4] = useState(false);
+  const [animationState, setAnimationState] = useState('paused');
+  const [genericAlertText, setGenericAlertText] = useState('');
   const numberOfSounds: number = 9;
   const numberOfPads: number = 12;
 
   const settingsObject: { [id: string]: number } = {};
+
+  useEffect(() => {
+    setAnimationState('running');
+    setGenericAlertText('🎸🤘 Please click or tap anywhere to allow sound 🎸🤘');
+    showAlert(timeout4, setShowAlert4);
+  }, []);
 
   for (let i = 0; i < numberOfSounds; i++) {
     for (let j = 0; j < numberOfPads; j++) {
@@ -158,13 +167,17 @@ function BeatsScreen() {
       );
     }
   }
-
+  let animVars = {
+    '--sliderAnim': numberOfPads * (500 - speed * 10) + 'ms',
+    '--sliderAnimState': animationState,
+  } as React.CSSProperties;
   let columns = { '--columns': numberOfPads } as React.CSSProperties;
   return (
     <>
       <Head title="Beats machine" />
 
       <div
+        style={animVars}
         className="min-h-screen container mx-auto flex flex-col flex-center justify-center items-center beats-screen overflow-x-hidden"
         id="display"
       >
@@ -174,7 +187,8 @@ function BeatsScreen() {
           <ThemePicker />
         </div>
 
-        <div className="drum-beats__layout mt-auto" id="drum-machine" style={columns}>
+        <div className="drum-beats__layout mt-auto relative" id="drum-machine" style={columns}>
+          <div className="drum-beats__slider"></div>
           {buttons}
         </div>
         <div className="drum-pad__layout mb-auto mt-10">
@@ -206,6 +220,7 @@ function BeatsScreen() {
           </div>
         </div>
         <div className="absolute flex-col inset-0 flex items-end justify-end -z-10 p-8 gap-4 overflow-hidden">
+          {showAlert4 && <Alert>{genericAlertText}</Alert>}
           {showAlert3 && <Alert alertClass="alert-error">Error with data!</Alert>}
           {showAlert2 && (
             <Alert>

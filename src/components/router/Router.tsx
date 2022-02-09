@@ -2,7 +2,11 @@ import { lazy, Suspense } from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import styles from '../../styles/spinner.module.css';
 
-const Loading = () => <div className={styles.trippleSpinner}></div>;
+const Loading = () => (
+  <div className="fixed inset-0 flex items-center justify-center">
+    <div className={styles.trippleSpinner}></div>
+  </div>
+);
 
 const IndexScreen = lazy(() => import('~/components/screens/Index'));
 const Page404Screen = lazy(() => import('~/components/screens/404'));
