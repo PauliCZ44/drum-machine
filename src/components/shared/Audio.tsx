@@ -41,7 +41,7 @@ const Audio = forwardRef(
     const isPressed: boolean = useKeyPress(binding.toLowerCase());
     const isPressedAlt = useKeyPress(altBinding.toLowerCase());
     const [isActivated, setIsActivated] = useState(isActive);
-    const [scale, setScale] = useState('scale-100');
+    const [scale, setScale] = useState('scale-100 opacity-10');
     const [transSpeed] = useState(325 - speed * 5);
 
     const playbackSpeed = (delay * interval) / numberOfPads;
@@ -57,9 +57,9 @@ const Audio = forwardRef(
         setTimeout(() => {
           if (isActivated) {
             play();
-            setScale('scale-125');
+            setScale('scale-125 opacity-100');
             setTimeout(() => {
-              setScale('scale-110');
+              setScale('scale-110 opacity-75');
             }, transSpeed);
           }
         }, playbackSpeed);
@@ -88,7 +88,7 @@ const Audio = forwardRef(
         />
         <div
           style={{ transitionDuration: `${transSpeed}ms` }}
-          className={`transition-transform duration-200 absolute -inset-0 rounded-md border-secondary border-4 -z-10  ${scale}`}
+          className={`transition-transform absolute -inset-0 rounded-md border-secondary border-4 -z-10  ${scale}`}
         />
       </>
     );
