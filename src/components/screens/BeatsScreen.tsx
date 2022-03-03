@@ -219,7 +219,7 @@ function BeatsScreen() {
             </ModalButton>
           </div>
         </div>
-        <div className="absolute flex-col inset-0 flex items-end justify-end -z-10 p-8 gap-4 overflow-hidden">
+        <div className="fixed flex-col inset-0 flex items-end justify-end z-10 pointer-events-none p-8 gap-4 overflow-hidden w-full h-full">
           {showAlert4 && <Alert>{genericAlertText}</Alert>}
           {showAlert3 && <Alert alertClass="alert-error">Error with data!</Alert>}
           {showAlert2 && (

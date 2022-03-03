@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import React from 'react';
-import useSound from 'use-sound';
 
 import { size } from '../../types';
 interface IButtonProps {
@@ -24,7 +23,7 @@ export default function Button({
 }: IButtonProps) {
   const [isActive, setIsActive] = useState<boolean>(isActived);
 
-  let classes: string = `btn ${isActive ? 'btn-primary' : ''}  btn-${size} ${classnames} `;
+  const classes: string = `btn ${isActive ? 'btn-primary' : ''}  btn-${size} ${classnames} `;
 
   function handleClick(e: React.MouseEvent<HTMLButtonElement>) {
     onClick && onClick(e);

@@ -1,5 +1,5 @@
-import { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
-import React from 'react';
+import React, { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
+
 import useSound from 'use-sound';
 
 import { useKeyPress, useInterval } from '~/hooks/';
@@ -49,11 +49,11 @@ const Audio = forwardRef(
       return () => clearTimeout(timer);
     }, [interval]);
 
-    if (interval != 0) {
+    if (interval !== 0) {
       useInterval(() => {
         setTimeout(() => {
           isActivated && play();
-        }, (delay * interval) / numberOfPads); //playbackSpeed / number of pads
+        }, (delay * interval) / numberOfPads); // playbackSpeed / number of pads
       }, interval);
     }
 
@@ -73,13 +73,14 @@ const Audio = forwardRef(
     return (
       <>
         <audio
-          className={'w-full h-full absolute flex justify-center items-center invisible ' + className}
+          className={`w-full h-full absolute flex justify-center items-center invisible ${  className}`}
           src={src}
           id={id}
-        ></audio>
+         />
       </>
     );
   }
 );
 
+Audio.displayName = "Audio";
 export default Audio;
