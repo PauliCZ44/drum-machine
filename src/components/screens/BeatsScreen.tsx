@@ -124,6 +124,9 @@ function BeatsScreen() {
     setStickySettings({ ...stickySettings, ...newSettings });
 
     showAlert(timeout2, setShowAlert2);
+    setTimeout(() => {
+      location.reload();
+    }, 3000);
   }
 
   for (let i = 0; i < numberOfSounds; i++) {
