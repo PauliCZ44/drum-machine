@@ -17,6 +17,7 @@ interface AudioI {
   delay?: number;
   isActive?: boolean;
   numberOfPads: number;
+  speed?: number;
 }
 
 const Audio = forwardRef(
@@ -33,27 +34,39 @@ const Audio = forwardRef(
       delay = 250,
       isActive = false,
       numberOfPads,
+      speed = 15,
     }: AudioI,
     ref
   ) => {
     const isPressed: boolean = useKeyPress(binding.toLowerCase());
     const isPressedAlt = useKeyPress(altBinding.toLowerCase());
     const [isActivated, setIsActivated] = useState(isActive);
+    const [scale, setScale] = useState('scale-100');
+    const [transSpeed] = useState(325 - speed * 5);
 
+    const playbackSpeed = (delay * interval) / numberOfPads;
+    console.log(speed);
     useEffect(() => {
       const timer = setTimeout(() => {
         console.log('effect fired');
 
         isActivated && play();
-      }, (delay * interval) / numberOfPads);
+      }, playbackSpeed);
       return () => clearTimeout(timer);
     }, [interval]);
 
     if (interval !== 0) {
       useInterval(() => {
         setTimeout(() => {
-          isActivated && play();
-        }, (delay * interval) / numberOfPads); // playbackSpeed / number of pads
+          if (isActivated) {
+            play();
+            console.log('Set scale here');
+            setScale('scale-125');
+            setTimeout(() => {
+              setScale('scale-110');
+            }, transSpeed);
+          }
+        }, playbackSpeed);
       }, interval);
     }
 
@@ -73,14 +86,18 @@ const Audio = forwardRef(
     return (
       <>
         <audio
-          className={`w-full h-full absolute flex justify-center items-center invisible ${  className}`}
+          className={`w-full h-full absolute flex justify-center items-center invisible ${className}`}
           src={src}
           id={id}
-         />
+        />
+        <div
+          style={{ transitionDuration: `${transSpeed}ms` }}
+          className={`transition-transform duration-200 absolute -inset-0 rounded-md border-secondary border-4 -z-10  ${scale}`}
+        />
       </>
     );
   }
 );
 
-Audio.displayName = "Audio";
+Audio.displayName = 'Audio';
 export default Audio;

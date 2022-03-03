@@ -69,7 +69,7 @@ function DrumScreen() {
           binding={keyBindings[i]}
           altBinding={numKeyBindings[i]}
           numberOfPads={0}
-         />
+        />
       </Button>
     );
   }
@@ -110,10 +110,10 @@ function DrumScreen() {
           <Slider title="Volume: " min={0} max={100} value={volume} step={1} onChange={(e) => changeVol(e)} />
 
           <DrumSetPicker
-          value={soundVariation}
+            value={soundVariation}
             wrapperClasses="three-cols mt-5"
             onChange={(val: soundVariationsT) => handleVariationChange(val)}
-           />
+          />
         </div>
       </div>
     </div>

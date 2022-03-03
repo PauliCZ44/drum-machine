@@ -31,7 +31,7 @@ function BeatsScreen() {
   const [showAlert2, setShowAlert2] = useState(false);
   const [showAlert3, setShowAlert3] = useState(false);
   const [showAlert4, setShowAlert4] = useState(false);
-  const [animationState, setAnimationState] = useState('paused');
+  const [animationName, setAnimationName] = useState('');
   const [genericAlertText, setGenericAlertText] = useState('');
   const numberOfSounds: number = 9;
   const numberOfPads: number = 12;
@@ -39,7 +39,7 @@ function BeatsScreen() {
   const settingsObject: { [id: string]: number } = {};
 
   useEffect(() => {
-    setAnimationState('running');
+    setAnimationName('moveRight');
     setGenericAlertText('🎸🤘 Please click or tap anywhere to allow sound 🎸🤘');
     showAlert(timeout4, setShowAlert4);
   }, []);
@@ -64,6 +64,10 @@ function BeatsScreen() {
   }
 
   function changeSpeed(e: React.ChangeEvent<HTMLInputElement>): void {
+    setAnimationName('');
+    window.requestAnimationFrame(() => {
+      setAnimationName('moveRight');
+    });
     setSpeed(+e.target.value);
   }
 
@@ -135,7 +139,7 @@ function BeatsScreen() {
       const childRef = useRef<any>();
       buttons.push(
         <Button
-          classnames="btn drum-pad h-12 p-0 overflow-hidden border-0 relative rounded-md shadow-lg border-2 border-gray-500/50"
+          classnames="btn drum-pad h-12 p-0 overflow-visible border-0 relative rounded-md shadow-lg border-2 border-gray-500/50"
           size="sm"
           id={`audio-${i}`}
           key={`${i}-${j}`}
@@ -155,6 +159,7 @@ function BeatsScreen() {
           {i}
           <Audio
             isActive={isElementActive}
+            speed={speed}
             interval={numberOfPads * (500 - speed * 10)} // max speed is 30
             delay={j}
             volume={volume}
@@ -172,7 +177,7 @@ function BeatsScreen() {
   }
   const animVars = {
     '--sliderAnim': `${numberOfPads * (500 - speed * 10)}ms`,
-    '--sliderAnimState': animationState,
+    '--sliderAnimName': animationName,
   } as React.CSSProperties;
   const columns = { '--columns': numberOfPads } as React.CSSProperties;
   return (
