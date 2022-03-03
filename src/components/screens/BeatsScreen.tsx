@@ -52,8 +52,8 @@ function BeatsScreen() {
   const [value, copy] = useCopyToClipboard();
   const [stickySettings, setStickySettings] = useStickyState(settingsObject, 'stickySettings');
 
-  let buttons: JSX.Element[] = [];
-  let sounds: string[] = ['Q', 'W', 'E', 'A', 'S', 'D', 'Z', 'X', 'C'];
+  const buttons: React.ReactNode[] = [];
+  const sounds: string[] = ['Q', 'W', 'E', 'A', 'S', 'D', 'Z', 'X', 'C'];
 
   function changePitch(e: React.ChangeEvent<HTMLInputElement>): void {
     setPitch(+e.target.value);
@@ -112,11 +112,11 @@ function BeatsScreen() {
       showAlert(timeout3, setShowAlert3);
       throw new Error('Data are corrupted');
     }
-    debugger;
+
     setPitch(parsedData.pitch);
     setSpeed(parsedData.speed);
     setSoundVariation(parsedData.soundVariation);
-    let newSettings = {};
+    const newSettings = {};
     for (const property in parsedData.els) {
       newSettings[property] = parsedData.els[property];
     }
@@ -135,8 +135,8 @@ function BeatsScreen() {
           classnames="btn drum-pad h-12 p-0 overflow-hidden border-0 relative rounded-md shadow-lg border-2 border-gray-500/50"
           size="sm"
           id={`audio-${i}`}
-          key={i + '-' + j}
-          toggleState={true}
+          key={`${i}-${j}`}
+          toggleState
           isActived={isElementActive}
           onClick={() => {
             setStickySettings({
@@ -162,16 +162,16 @@ function BeatsScreen() {
             id={sounds[i]}
             binding={sounds[i]}
             numberOfPads={numberOfPads}
-          ></Audio>
+          />
         </Button>
       );
     }
   }
-  let animVars = {
-    '--sliderAnim': numberOfPads * (500 - speed * 10) + 'ms',
+  const animVars = {
+    '--sliderAnim': `${numberOfPads * (500 - speed * 10)}ms`,
     '--sliderAnimState': animationState,
   } as React.CSSProperties;
-  let columns = { '--columns': numberOfPads } as React.CSSProperties;
+  const columns = { '--columns': numberOfPads } as React.CSSProperties;
   return (
     <>
       <Head title="Beats machine" />
@@ -188,7 +188,7 @@ function BeatsScreen() {
         </div>
 
         <div className="drum-beats__layout mt-auto relative" id="drum-machine" style={columns}>
-          <div className="drum-beats__slider"></div>
+          <div className="drum-beats__slider" />
           {buttons}
         </div>
         <div className="drum-pad__layout mb-auto mt-10">
@@ -202,7 +202,7 @@ function BeatsScreen() {
             value={soundVariation}
             wrapperClasses="three-cols mt-5"
             onChange={(val: soundVariationsT) => handleVariationChange(val)}
-          ></DrumSetPicker>
+          />
           <div className="form-control -mr-16 mt-3">
             <Button onClick={copyToClipboard}> Export settings</Button>
           </div>
@@ -215,7 +215,7 @@ function BeatsScreen() {
                 className="textarea h-16 w-full textarea-bordered"
                 placeholder='{"els":{...},"speed":...,"'
                 ref={textareaRef}
-              ></textarea>
+              />
             </ModalButton>
           </div>
         </div>

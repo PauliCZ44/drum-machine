@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { Head } from '~/components/shared/Head';
 import Button from '~/components/shared/Button';
 import Audio from '~/components/shared/Audio';
@@ -19,9 +19,9 @@ function DrumScreen() {
   const [volume, setVolume] = useState(100);
 
   const numberOfButtons: number = 9;
-  let buttons: JSX.Element[] = [];
-  let keyBindings: string[] = ['Q', 'W', 'E', 'A', 'S', 'D', 'Z', 'X', 'C'];
-  let numKeyBindings: string[] = ['7', '8', '9', '4', '5', '6', '1', '2', '3'];
+  const buttons: React.ReactNode[] = [];
+  const keyBindings: string[] = ['Q', 'W', 'E', 'A', 'S', 'D', 'Z', 'X', 'C'];
+  const numKeyBindings: string[] = ['7', '8', '9', '4', '5', '6', '1', '2', '3'];
 
   function changePitch(e): void {
     setPitch(e.target.value);
@@ -35,7 +35,7 @@ function DrumScreen() {
     setSoundVariation(value);
   }
 
-  if (keyBindings.length != numKeyBindings.length || numberOfButtons != numKeyBindings.length) {
+  if (keyBindings.length !== numKeyBindings.length || numberOfButtons !== numKeyBindings.length) {
     throw new Error('Bad parameters');
   }
 
@@ -69,7 +69,7 @@ function DrumScreen() {
           binding={keyBindings[i]}
           altBinding={numKeyBindings[i]}
           numberOfPads={0}
-        ></Audio>
+         />
       </Button>
     );
   }
@@ -110,9 +110,10 @@ function DrumScreen() {
           <Slider title="Volume: " min={0} max={100} value={volume} step={1} onChange={(e) => changeVol(e)} />
 
           <DrumSetPicker
+          value={soundVariation}
             wrapperClasses="three-cols mt-5"
             onChange={(val: soundVariationsT) => handleVariationChange(val)}
-          ></DrumSetPicker>
+           />
         </div>
       </div>
     </div>
