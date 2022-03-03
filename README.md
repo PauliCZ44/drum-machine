@@ -2,6 +2,8 @@
 
 This project was made as a spin-off from a drum machine [freeCodeCamp project](https://www.freecodecamp.org/learn/front-end-development-libraries/front-end-development-libraries-projects/build-a-drum-machine), which is a part of Front End Development Libraries Certification.
 
+## [Link to app](https://drumsandbeats.netlify.app/)
+
 ## Drum machine (manual) app features
 
 - play sound on key press/mouse click
