@@ -4,7 +4,7 @@ import styles from '../../styles/spinner.module.css';
 
 const Loading = () => (
   <div className="fixed inset-0 flex items-center justify-center">
-    <div className={styles.trippleSpinner}></div>
+    <div className={styles.trippleSpinner} />
   </div>
 );
 
