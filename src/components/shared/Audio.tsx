@@ -45,11 +45,8 @@ const Audio = forwardRef(
     const [transSpeed] = useState(325 - speed * 5);
 
     const playbackSpeed = (delay * interval) / numberOfPads;
-    console.log(speed);
     useEffect(() => {
       const timer = setTimeout(() => {
-        console.log('effect fired');
-
         isActivated && play();
       }, playbackSpeed);
       return () => clearTimeout(timer);
@@ -60,7 +57,6 @@ const Audio = forwardRef(
         setTimeout(() => {
           if (isActivated) {
             play();
-            console.log('Set scale here');
             setScale('scale-125');
             setTimeout(() => {
               setScale('scale-110');

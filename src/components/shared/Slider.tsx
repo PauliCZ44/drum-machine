@@ -37,7 +37,7 @@ export default function Slider({
         max={max}
         value={value}
         step={step}
-        className={'range range-primary block my-auto p-5 two-cols ' + inputClassNames}
+        className={`range range-primary block my-auto p-5 two-cols ${  inputClassNames}`}
         onChange={(e) => onChange(e)}
       />
     </>

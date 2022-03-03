@@ -79,7 +79,7 @@ function BeatsScreen() {
     showAlert(timeout1, setShowAlert1);
     const filteredObj = {};
     for (const property in stickySettings) {
-      if (!!stickySettings[property]) {
+      if (stickySettings[property]) {
         filteredObj[property] = stickySettings[property];
       }
     }
@@ -95,13 +95,11 @@ function BeatsScreen() {
   }
 
   function showAlert(timeout, setShowAlert) {
-    console.log(timeout);
     clearTimeout(timeout);
     setShowAlert(true);
     timeout = setTimeout(() => {
       setShowAlert(false);
     }, 4000);
-    console.log(timeout);
   }
 
   function importSettings(data) {
