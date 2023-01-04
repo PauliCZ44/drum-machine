@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Head } from '~/components/shared/Head';
 import Button from '~/components/shared/Button';
 import Audio from '~/components/shared/Audio';
@@ -11,11 +11,28 @@ import { useCopyToClipboard, useStickyState, useThrottle } from '~/hooks/';
 import { soundVariationsT } from '../../types';
 import ModalButton from '~/components/shared/ModalButton';
 import Alert from '~/components/shared/Alert';
+import { useDebouncedValue } from '~/hooks/useDeboundedValue';
+import ButtonsWrapper from '../shared/ButtonsWrapper';
 
 let timeout4;
 let timeout3;
 let timeout2;
 let timeout1;
+
+const numberOfSounds: number = 9;
+const numberOfPads: number = 12;
+
+const generateSettingsObject = (numberOfSounds: number, numberOfPads: number) => {
+  const settingsObject: { [id: string]: number } = {};
+  for (let i = 0; i < numberOfSounds; i++) {
+    for (let j = 0; j < numberOfPads; j++) {
+      settingsObject[`${i}-${j}`] = 0;
+    }
+  }
+  return settingsObject;
+};
+
+export const SOUNDS: string[] = ['Q', 'W', 'E', 'A', 'S', 'D', 'Z', 'X', 'C'];
 
 function BeatsScreen() {
   const textareaRef = useRef<HTMLTextAreaElement>(null!); // - element is always there; non-null assertion operator
@@ -27,16 +44,17 @@ function BeatsScreen() {
   const [setVolume] = useThrottle(setVolumeS, 25);
   const [speed, setSpeedS] = useStickyState(15, 'speed');
   const [setSpeed] = useThrottle(setSpeedS, 25);
+
+  const [debouncedSpeed] = useDebouncedValue(speed, 300);
+  const [deboundedPitch] = useDebouncedValue(pitch, 300);
+  const [debouncedVolume] = useDebouncedValue(volume, 300);
+
   const [showAlert1, setShowAlert1] = useState(false);
   const [showAlert2, setShowAlert2] = useState(false);
   const [showAlert3, setShowAlert3] = useState(false);
   const [showAlert4, setShowAlert4] = useState(false);
   const [animationName, setAnimationName] = useState('');
   const [genericAlertText, setGenericAlertText] = useState('');
-  const numberOfSounds: number = 9;
-  const numberOfPads: number = 12;
-
-  const settingsObject: { [id: string]: number } = {};
 
   useEffect(() => {
     setAnimationName('moveRight');
@@ -44,16 +62,11 @@ function BeatsScreen() {
     showAlert(timeout4, setShowAlert4);
   }, []);
 
-  for (let i = 0; i < numberOfSounds; i++) {
-    for (let j = 0; j < numberOfPads; j++) {
-      settingsObject[`${i}-${j}`] = 0;
-    }
-  }
-  const [value, copy] = useCopyToClipboard();
-  const [stickySettings, setStickySettings] = useStickyState(settingsObject, 'stickySettings');
-
-  const buttons: React.ReactNode[] = [];
-  const sounds: string[] = ['Q', 'W', 'E', 'A', 'S', 'D', 'Z', 'X', 'C'];
+  const [, copy] = useCopyToClipboard();
+  const [stickySettings, setStickySettings] = useStickyState(
+    generateSettingsObject(numberOfPads, numberOfSounds),
+    'stickySettings'
+  );
 
   function changePitch(e: React.ChangeEvent<HTMLInputElement>): void {
     setPitch(+e.target.value);
@@ -131,48 +144,34 @@ function BeatsScreen() {
     }, 3000);
   }
 
-  for (let i = 0; i < numberOfSounds; i++) {
-    for (let j = 0; j < numberOfPads; j++) {
-      const isElementActive = !!stickySettings[`${i}-${j}`];
-      const childRef = useRef<any>();
-      buttons.push(
-        <Button
-          classnames="btn drum-pad h-12 p-0 overflow-visible border-0 relative rounded-md shadow-lg border-2 border-gray-500/50"
-          size="sm"
-          id={`audio-${i}`}
-          key={`${i}-${j}`}
-          toggleState
-          isActived={isElementActive}
-          onClick={() => {
-            setStickySettings({
-              ...stickySettings,
-              [`${i}-${j}`]: stickySettings[`${i}-${j}`] ? 0 : 1,
-            });
-            if (childRef?.current) {
-              childRef.current.setIsActivated();
-              childRef.current.playFromParent();
-            }
-          }}
-        >
-          {i}
-          <Audio
-            isActive={isElementActive}
-            speed={speed}
-            interval={numberOfPads * (500 - speed * 10)} // max speed is 30
-            delay={j}
-            volume={volume}
-            pitch={pitch}
-            ref={childRef}
-            src={`/audio/${soundVariation}/${sounds[i]}.wav`}
-            className="clip"
-            id={sounds[i]}
-            binding={sounds[i]}
-            numberOfPads={numberOfPads}
+  const generateBtns = useMemo(() => {
+    const buttons: React.ReactNode[] = [];
+    console.log('generateBtns');
+    for (let i = 0; i < numberOfSounds; i++) {
+      for (let j = 0; j < numberOfPads; j++) {
+        buttons.push(
+          <ButtonsWrapper
+            key={`${i}-${j}`}
+            {...{
+              numberOfSounds,
+              numberOfPads,
+              stickySettings,
+              setStickySettings,
+              debouncedSpeed,
+              deboundedPitch,
+              debouncedVolume,
+              soundVariation,
+              sounds: SOUNDS,
+              i,
+              j,
+            }}
           />
-        </Button>
-      );
+        );
+      }
     }
-  }
+    return buttons;
+  }, [numberOfSounds, numberOfPads, debouncedSpeed, deboundedPitch, debouncedVolume, soundVariation, stickySettings]);
+
   const animVars = {
     '--sliderAnim': `${numberOfPads * (500 - speed * 10)}ms`,
     '--sliderAnimName': animationName,
@@ -195,7 +194,7 @@ function BeatsScreen() {
 
         <div className="drum-beats__layout mt-auto relative" id="drum-machine" style={columns}>
           <div className="drum-beats__slider" />
-          {buttons}
+          {generateBtns}
         </div>
         <div className="drum-pad__layout mb-auto mt-10">
           <Slider title="Speed: " min={1} max={40} value={speed} step={1} onChange={(e) => changeSpeed(e)} />
@@ -222,6 +221,10 @@ function BeatsScreen() {
                 placeholder='{"els":{...},"speed":...,"'
                 ref={textareaRef}
               />
+              <div className="text-sm font-light opacity-80">
+                With imdivort setting you can load other people&apos;s settings, or save your own settings to load them
+                later. With this you can play share your settings with your friends!
+              </div>
             </ModalButton>
           </div>
         </div>
