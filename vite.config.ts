@@ -1,7 +1,11 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import tsconfigPaths from 'vite-tsconfig-paths';
-const path = require('path');
+import path from 'path';
+
+const ReactCompilerConfig = {
+  target: '19',
+}
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -11,5 +15,12 @@ export default defineConfig({
       '@hooks': path.resolve(__dirname, './src/hooks/'),
     },
   },
-  plugins: [react(), tsconfigPaths()],
+  plugins: [
+    react({
+      babel: {
+        plugins: [['babel-plugin-react-compiler', ReactCompilerConfig]],
+      },
+    }),
+    tsconfigPaths(),
+  ],
 });

@@ -38,8 +38,9 @@ const Audio = forwardRef(
     }: AudioI,
     ref
   ) => {
-    const isPressed: boolean = useKeyPress(binding.toLowerCase());
-    const isPressedAlt = useKeyPress(altBinding.toLowerCase());
+    const [play] = useSound(src, { interrupt: true, playbackRate: pitch, volume: volume / 100 });
+    useKeyPress(binding.toLowerCase(), play);
+    useKeyPress(altBinding.toLowerCase(), play);
     const [isActivated, setIsActivated] = useState(isActive);
     const [scale, setScale] = useState('scale-100 opacity-10');
     const [transSpeed] = useState(325 - speed * 5);
@@ -66,18 +67,10 @@ const Audio = forwardRef(
       }, interval);
     }
 
-    const [play] = useSound(src, { interrupt: true, playbackRate: pitch, volume: volume / 100 });
-
     useImperativeHandle(ref, () => ({
       playFromParent: () => play(),
       setIsActivated: () => setIsActivated(!isActivated),
     }));
-
-    const pressed = isPressed || isPressedAlt;
-
-    if (pressed) {
-      play();
-    }
 
     return (
       <>

@@ -2,19 +2,21 @@
 
 import { useState, useEffect } from 'react';
 
-export default function useKeyPress(targetKey: string): boolean {
+export default function useKeyPress(targetKey: string, callback?: Function): boolean {
   // State for keeping track of whether key is pressed
   const [keyPressed, setKeyPressed] = useState(false);
   // If pressed key is our target key then set to true
   function downHandler({ key }): void {
     if (key === targetKey) {
       setKeyPressed(() => true);
+      callback?.();
     }
   }
   // If released key is our target key then set to false
   const upHandler = ({ key }): void => {
     if (key === targetKey) {
       setKeyPressed(() => false);
+      callback?.();
     }
   };
   // Add event listeners

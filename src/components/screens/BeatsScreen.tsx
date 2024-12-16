@@ -1,23 +1,19 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Head } from '~/components/shared/Head';
+import React, { ComponentProps, useEffect, useRef, useState } from 'react';
 import Button from '~/components/shared/Button';
-import Audio from '~/components/shared/Audio';
-import ThemePicker from '~/components/shared/ThemePicker';
-import Slider from '~/components/shared/Slider';
-import HomeBtn from '~/components/shared/HomeBtn';
 import DrumSetPicker from '~/components/shared/DrumSetPicker';
+import { Head } from '~/components/shared/Head';
+import HomeBtn from '~/components/shared/HomeBtn';
+import Slider from '~/components/shared/Slider';
+import ThemePicker from '~/components/shared/ThemePicker';
 import { useCopyToClipboard, useStickyState, useThrottle } from '~/hooks/';
 
-import { soundVariationsT } from '../../types';
-import ModalButton from '~/components/shared/ModalButton';
 import Alert from '~/components/shared/Alert';
+import ModalButton from '~/components/shared/ModalButton';
 import { useDebouncedValue } from '~/hooks/useDeboundedValue';
+import { soundVariationsT } from '../../types';
 import ButtonsWrapper from '../shared/ButtonsWrapper';
 
-let timeout4;
-let timeout3;
-let timeout2;
-let timeout1;
+const timeouts: Array<any> = [];
 
 const numberOfSounds: number = 9;
 const numberOfPads: number = 12;
@@ -49,17 +45,14 @@ function BeatsScreen() {
   const [deboundedPitch] = useDebouncedValue(pitch, 300);
   const [debouncedVolume] = useDebouncedValue(volume, 300);
 
-  const [showAlert1, setShowAlert1] = useState(false);
-  const [showAlert2, setShowAlert2] = useState(false);
-  const [showAlert3, setShowAlert3] = useState(false);
-  const [showAlert4, setShowAlert4] = useState(false);
+  const [showedAlertIds, setShowedAlertIds] = useState<number[]>([]);
   const [animationName, setAnimationName] = useState('');
   const [genericAlertText, setGenericAlertText] = useState('');
 
   useEffect(() => {
     setAnimationName('moveRight');
     setGenericAlertText('🎸🤘 Please click or tap anywhere to allow sound 🎸🤘');
-    showAlert(timeout4, setShowAlert4);
+    showAlert(4);
   }, []);
 
   const [, copy] = useCopyToClipboard();
@@ -89,7 +82,7 @@ function BeatsScreen() {
   }
 
   function copyToClipboard() {
-    showAlert(timeout1, setShowAlert1);
+    showAlert(1);
     const filteredObj = {};
     for (const property in stickySettings) {
       if (stickySettings[property]) {
@@ -107,11 +100,11 @@ function BeatsScreen() {
     copy(JSON.stringify(settingsObj));
   }
 
-  function showAlert(timeout, setShowAlert) {
-    clearTimeout(timeout);
-    setShowAlert(true);
-    timeout = setTimeout(() => {
-      setShowAlert(false);
+  function showAlert(id: number) {
+    setShowedAlertIds([...showedAlertIds, id]);
+    clearTimeout(timeouts[id]);
+    timeouts[id] = setTimeout(() => {
+      setShowedAlertIds(showedAlertIds.filter((alertId) => alertId !== id));
     }, 4000);
   }
 
@@ -120,11 +113,11 @@ function BeatsScreen() {
     try {
       parsedData = JSON.parse(data);
     } catch (e) {
-      showAlert(timeout3, setShowAlert3);
+      showAlert(3);
       throw new Error('Data are corrupted');
     }
     if (!parsedData.pitch || !parsedData.speed || !parsedData.soundVariation || !parsedData.els) {
-      showAlert(timeout3, setShowAlert3);
+      showAlert(3);
       throw new Error('Data are corrupted');
     }
 
@@ -138,39 +131,11 @@ function BeatsScreen() {
     console.log(newSettings);
     setStickySettings({ ...stickySettings, ...newSettings });
 
-    showAlert(timeout2, setShowAlert2);
+    showAlert(2);
     setTimeout(() => {
       location.reload();
     }, 3000);
   }
-
-  const generateBtns = useMemo(() => {
-    const buttons: React.ReactNode[] = [];
-    console.log('generateBtns');
-    for (let i = 0; i < numberOfSounds; i++) {
-      for (let j = 0; j < numberOfPads; j++) {
-        buttons.push(
-          <ButtonsWrapper
-            key={`${i}-${j}`}
-            {...{
-              numberOfSounds,
-              numberOfPads,
-              stickySettings,
-              setStickySettings,
-              debouncedSpeed,
-              deboundedPitch,
-              debouncedVolume,
-              soundVariation,
-              sounds: SOUNDS,
-              i,
-              j,
-            }}
-          />
-        );
-      }
-    }
-    return buttons;
-  }, [numberOfSounds, numberOfPads, debouncedSpeed, deboundedPitch, debouncedVolume, soundVariation, stickySettings]);
 
   const animVars = {
     '--sliderAnim': `${numberOfPads * (500 - speed * 10)}ms`,
@@ -194,7 +159,18 @@ function BeatsScreen() {
 
         <div className="drum-beats__layout mt-auto relative" id="drum-machine" style={columns}>
           <div className="drum-beats__slider" />
-          {generateBtns}
+          <AllTheButtons
+            {...{
+              numberOfSounds,
+              numberOfPads,
+              stickySettings,
+              setStickySettings,
+              debouncedSpeed,
+              deboundedPitch,
+              debouncedVolume,
+              soundVariation,
+            }}
+          />
         </div>
         <div className="drum-pad__layout mb-auto mt-10">
           <Slider title="Speed: " min={1} max={40} value={speed} step={1} onChange={(e) => changeSpeed(e)} />
@@ -229,18 +205,42 @@ function BeatsScreen() {
           </div>
         </div>
         <div className="fixed flex-col inset-0 flex items-end justify-end z-10 pointer-events-none p-8 gap-4 overflow-hidden w-full h-full">
-          {showAlert4 && <Alert>{genericAlertText}</Alert>}
-          {showAlert3 && <Alert alertClass="alert-error">Error with data!</Alert>}
-          {showAlert2 && (
+          {showedAlertIds.includes(4) && <Alert>{genericAlertText}</Alert>}
+          {showedAlertIds.includes(3) && <Alert alertClass="alert-error">Error with data!</Alert>}
+          {showedAlertIds.includes(2) && (
             <Alert>
               Settings imported, please refresh the page to see the effect! <br /> (Auto refresh in 3 seconds)
             </Alert>
           )}
-          {showAlert1 && <Alert>Text copied to clipboard</Alert>}
+          {showedAlertIds.includes(1) && <Alert>Text copied to clipboard</Alert>}
         </div>
       </div>
     </>
   );
 }
+
+const AllTheButtons = ({
+  stickySettings,
+  ...props
+}: Omit<ComponentProps<typeof ButtonsWrapper>, 'i' | 'j' | 'isElementActive'> & { stickySettings: any }) => {
+  const buttons: React.ReactNode[] = [];
+  for (let i = 0; i < numberOfSounds; i++) {
+    for (let j = 0; j < numberOfPads; j++) {
+      buttons.push(
+        <ButtonsWrapper
+          {...props}
+          isElementActive={!!stickySettings[`${i}-${j}`]}
+          {...{
+            sounds: SOUNDS,
+            i,
+            j,
+          }}
+        />
+      );
+    }
+  }
+
+  return <>{buttons} </>;
+};
 
 export default BeatsScreen;

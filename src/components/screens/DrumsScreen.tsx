@@ -41,7 +41,7 @@ function DrumScreen() {
 
   for (let i = 0; i < numberOfButtons; i++) {
     const key = keysVariation === 'numPad' ? numKeyBindings[i] : keyBindings[i];
-    const childRef = useRef<any>();
+    const childRef = useRef<any>(null);
 
     const isPressed: boolean = useKeyPress(key.toLowerCase());
     const isPressedAlt: boolean = useKeyPress(key.toLowerCase());

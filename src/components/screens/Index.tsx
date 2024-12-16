@@ -1,11 +1,7 @@
-import { useAuthState } from '~/components/contexts/UserContext';
-import { SignInButton } from '~/components/domain/auth/SignInButton';
-import { SignOutButton } from '~/components/domain/auth/SignOutButton';
 import { Head } from '~/components/shared/Head';
 import Footer from '../shared/Footer';
 
 function Index() {
-  const { state } = useAuthState();
 
   return (
     <>

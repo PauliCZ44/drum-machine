@@ -7,7 +7,7 @@ function ButtonsWrapper({
   soundVariation,
   numberOfSounds,
   numberOfPads,
-  stickySettings,
+  isElementActive,
   setStickySettings,
   debouncedSpeed,
   deboundedPitch,
@@ -15,21 +15,20 @@ function ButtonsWrapper({
   i,
   j,
 }) {
-  const isElementActive = !!stickySettings[`${i}-${j}`];
-  const childRef = useRef<any>();
+  const childRef = useRef<any>(null);
   return (
     <Button
       classnames="btn drum-pad h-12 p-0 overflow-visible border-0 relative rounded-md shadow-lg border-2 border-gray-500/50"
       size="sm"
       id={`audio-${i}`}
-      key={`${i}-${j}`}
+      // key={`${i}-${j}`}
       toggleState
       isActived={isElementActive}
       onClick={() => {
-        setStickySettings({
-          ...stickySettings,
-          [`${i}-${j}`]: stickySettings[`${i}-${j}`] ? 0 : 1,
-        });
+        setStickySettings((prev) => ({
+          ...prev,
+          [`${i}-${j}`]: prev[`${i}-${j}`] ? 0 : 1,
+        }));
         if (childRef?.current) {
           childRef.current.setIsActivated();
           childRef.current.playFromParent();
@@ -55,4 +54,4 @@ function ButtonsWrapper({
   );
 }
 
-export default ButtonsWrapper;
+export default memo(ButtonsWrapper);
