@@ -1,4 +1,4 @@
-import React, { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
+import React, { useState, useEffect, forwardRef, useImperativeHandle, useCallback } from 'react';
 
 import useSound from 'use-sound';
 
@@ -43,9 +43,10 @@ const Audio = forwardRef(
     useKeyPress(altBinding.toLowerCase(), play);
     const [isActivated, setIsActivated] = useState(isActive);
     const [scale, setScale] = useState('scale-100 opacity-10');
-    const [transSpeed] = useState(325 - speed * 5);
+    const transSpeed = 325 - speed * 5;
 
     const playbackSpeed = (delay * interval) / numberOfPads;
+
     useEffect(() => {
       const timer = setTimeout(() => {
         isActivated && play();
@@ -53,8 +54,8 @@ const Audio = forwardRef(
       return () => clearTimeout(timer);
     }, [interval]);
 
-    if (interval !== 0) {
-      useInterval(() => {
+    const intervalCb = useCallback(() => {
+      if (interval !== 0) {
         setTimeout(() => {
           if (isActivated) {
             play();
@@ -64,8 +65,10 @@ const Audio = forwardRef(
             }, transSpeed);
           }
         }, playbackSpeed);
-      }, interval);
-    }
+      }
+    }, [isActivated, playbackSpeed, transSpeed, interval, play]);
+
+    useInterval(intervalCb, interval);
 
     useImperativeHandle(ref, () => ({
       playFromParent: () => play(),

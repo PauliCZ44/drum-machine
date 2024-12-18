@@ -228,6 +228,7 @@ const AllTheButtons = ({
     for (let j = 0; j < numberOfPads; j++) {
       buttons.push(
         <ButtonsWrapper
+          key={`${i}-${j}`}
           {...props}
           isElementActive={!!stickySettings[`${i}-${j}`]}
           {...{
